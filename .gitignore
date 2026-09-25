@@ -1,0 +1,23 @@
+# dependencies
+node_modules/
+
+# Next.js build output
+.next/
+out/
+
+# database file (SQLite - local only, reviewer runs migrate dev themselves)
+prisma/dev.db
+prisma/dev.db-journal
+
+# env files - don't leak secrets
+.env
+.env.local
+.env.production
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# editor
+.vscode/
+.idea/

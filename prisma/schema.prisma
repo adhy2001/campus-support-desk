@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Note: SQLite does not support native enums (Prisma 5.22+).
+// Enum values are stored as String and validated at the application layer.
+// See lib/ticketLogic.ts for the canonical enum definitions.
+
+model User {
+  id               String     @id @default(cuid())
+  name             String
+  email            String     @unique
+  /// Role: STUDENT | STAFF | ADMIN
+  role             String
+  createdTickets   Ticket[]   @relation("CreatedBy")
+  assignedTickets  Ticket[]   @relation("AssignedTo")
+  comments         Comment[]
+  createdAt        DateTime   @default(now())
+}
+
+model Ticket {
+  id            String     @id @default(cuid())
+  title         String
+  description   String
+  /// Category: FEES | ATTENDANCE | ID_CARD | DOCUMENTS | CERTIFICATES | OTHER
+  category      String
+  /// Status: OPEN | IN_PROGRESS | PENDING_STUDENT | RESOLVED | CLOSED | ESCALATED
+  status        String     @default("OPEN")
+  /// Priority: LOW | MEDIUM | HIGH | URGENT
+  priority      String     @default("MEDIUM")
+  createdBy     User       @relation("CreatedBy", fields: [createdById], references: [id])
+  createdById   String
+  assignedTo    User?      @relation("AssignedTo", fields: [assignedToId], references: [id])
+  assignedToId  String?
+  slaDueAt      DateTime
+  resolvedAt    DateTime?
+  escalated     Boolean    @default(false)
+  comments      Comment[]
+  activity      Activity[]
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  ticket    Ticket   @relation(fields: [ticketId], references: [id])
+  ticketId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+  message   String
+  createdAt DateTime @default(now())
+}
+
+model Activity {
+  id        String   @id @default(cuid())
+  ticket    Ticket   @relation(fields: [ticketId], references: [id])
+  ticketId  String
+  action    String
+  detail    String
+  createdAt DateTime @default(now())
+}
