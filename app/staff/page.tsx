@@ -125,40 +125,27 @@ export default function StaffPage() {
   const escalatedCount = tickets.filter((t) => t.autoEscalate || t.status === 'ESCALATED').length
 
   return (
-    <div className="max-w-7xl mx-auto py-8 px-6">
+    <div className="max-w-7xl mx-auto py-12 px-6">
       {/* Toast */}
       {toast && (
-        <div className="fixed top-16 right-4 z-50 px-4 py-3 bg-slate-800 text-white rounded-xl text-sm shadow-lg animate-in slide-in-from-right">
-          {toast}
+        <div className="fixed top-24 right-6 z-50 px-6 py-4 bg-brand-900 text-white rounded-xl text-sm font-bold shadow-premium animate-in slide-in-from-right flex items-center gap-3">
+          <span>ℹ️</span> {toast}
         </div>
       )}
 
-      <div className="mb-6">
-        <h1 className="text-2xl font-extrabold text-slate-900">Staff Dashboard</h1>
-        <p className="text-slate-500 text-sm mt-1">Kanban view — assign, move, and resolve tickets</p>
-      </div>
-
-      {/* Stats bar */}
-      <div className="flex flex-wrap gap-3 mb-6">
-        <div className="bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm flex items-center gap-2">
-          <span className="text-slate-500">Total</span>
-          <span className="font-bold text-slate-800">{tickets.length}</span>
+      <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+          <h1 className="text-3xl font-extrabold text-brand-950 tracking-tight">Staff Dashboard</h1>
+          <p className="text-slate-500 text-base mt-2">Manage, assign, and resolve student tickets</p>
         </div>
-        <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-2.5 text-sm text-red-700 flex items-center gap-2">
-          <span>⏰ Overdue</span>
-          <span className="font-bold">{overdueCount}</span>
-        </div>
-        <div className="bg-orange-50 border border-orange-200 rounded-xl px-4 py-2.5 text-sm text-orange-700 flex items-center gap-2">
-          <span>🚨 Escalated</span>
-          <span className="font-bold">{escalatedCount}</span>
-        </div>
-        <div className="ml-auto">
+        
+        <div className="flex flex-wrap gap-4 items-center">
           <select
-            className="border border-slate-200 rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            className="border-2 border-slate-100 rounded-xl px-4 py-2 text-sm font-semibold bg-white focus:outline-none focus:ring-4 focus:ring-brand-100 focus:border-brand-500 appearance-none min-w-[200px]"
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
           >
-            <option value="">All categories</option>
+            <option value="">📁 All Categories</option>
             {Object.entries(CATEGORY_LABELS).map(([val, label]) => (
               <option key={val} value={val}>{label}</option>
             ))}
@@ -166,63 +153,93 @@ export default function StaffPage() {
         </div>
       </div>
 
+      {/* Stats bar */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <div className="bg-white border border-slate-100 shadow-sm rounded-2xl p-6 flex items-center justify-between">
+          <div>
+            <div className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-1">Total Active</div>
+            <div className="text-3xl font-extrabold text-brand-950">{tickets.length}</div>
+          </div>
+          <div className="w-12 h-12 bg-brand-50 rounded-full flex items-center justify-center text-xl">📋</div>
+        </div>
+        <div className="bg-white border border-red-100 shadow-sm rounded-2xl p-6 flex items-center justify-between">
+          <div>
+            <div className="text-sm font-bold text-red-500 uppercase tracking-wider mb-1">Overdue</div>
+            <div className="text-3xl font-extrabold text-red-700">{overdueCount}</div>
+          </div>
+          <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center text-xl">⏰</div>
+        </div>
+        <div className="bg-white border border-accent-100 shadow-sm rounded-2xl p-6 flex items-center justify-between">
+          <div>
+            <div className="text-sm font-bold text-accent-500 uppercase tracking-wider mb-1">Escalated</div>
+            <div className="text-3xl font-extrabold text-accent-700">{escalatedCount}</div>
+          </div>
+          <div className="w-12 h-12 bg-accent-50 rounded-full flex items-center justify-center text-xl">🚨</div>
+        </div>
+      </div>
+
       {loading ? (
-        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        <div className="flex gap-6 overflow-x-auto pb-8 snap-x">
           {STATUS_COLUMNS.map((col) => (
-            <div key={col} className="bg-slate-100 rounded-xl p-3 h-48 animate-pulse" />
+            <div key={col} className="bg-slate-50 rounded-3xl p-4 w-80 shrink-0 snap-start animate-pulse" />
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 items-start">
+        <div className="flex gap-6 overflow-x-auto pb-8 snap-x min-h-[600px] items-start scrollbar-hide">
           {STATUS_COLUMNS.map((col) => {
             const colTickets = tickets.filter((t) => t.status === col)
             return (
-              <div key={col} className={`rounded-xl border ${STATUS_COLUMN_COLORS[col]} p-3 min-h-[80px]`}>
-                <h3 className={`text-xs font-bold uppercase tracking-wide mb-3 flex items-center justify-between ${STATUS_HEADER_COLORS[col]}`}>
+              <div key={col} className={`rounded-3xl border-2 ${STATUS_COLUMN_COLORS[col]} bg-slate-50/50 p-4 w-80 shrink-0 snap-start flex flex-col max-h-[80vh]`}>
+                <h3 className={`text-sm font-extrabold uppercase tracking-wider mb-4 flex items-center justify-between ${STATUS_HEADER_COLORS[col]} px-2 pt-2`}>
                   <span>{STATUS_LABELS[col]}</span>
-                  <span className="bg-white/70 rounded-full px-2 py-0.5 text-xs">{colTickets.length}</span>
+                  <span className="bg-white rounded-full px-3 py-1 shadow-sm text-xs">{colTickets.length}</span>
                 </h3>
-                <div className="space-y-2">
+                
+                <div className="space-y-4 overflow-y-auto flex-1 pr-2 pb-2">
                   {colTickets.map((t) => (
-                    <div key={t.id} className="bg-white rounded-lg p-3 border border-white shadow-sm hover:shadow-md transition-shadow">
-                      <Link
-                        href={`/tickets/${t.id}`}
-                        className="font-semibold text-slate-800 text-sm hover:text-indigo-700 transition-colors line-clamp-2 block"
-                      >
-                        {t.title}
-                      </Link>
-                      <div className="flex flex-wrap gap-1 mt-2">
+                    <div key={t.id} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-premium transition-all duration-300">
+                      <div className="flex flex-wrap gap-2 mb-3">
                         <OverdueBadge overdue={t.overdue} />
                         <PriorityBadge priority={t.priority} />
                         {t.autoEscalate && (
-                          <span className="px-1.5 py-0.5 rounded-full text-xs font-bold bg-red-600 text-white">
-                            AUTO↑
+                          <span className="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-red-600 text-white tracking-widest uppercase shadow-sm">
+                            Auto↑
                           </span>
                         )}
                       </div>
-                      <div className="text-xs text-slate-400 mt-2">
-                        {CATEGORY_LABELS[t.category] || t.category} · {t.ageHours}h · {t.createdBy.name}
+                      
+                      <Link
+                        href={`/tickets/${t.id}`}
+                        className="font-bold text-slate-800 text-base leading-snug hover:text-brand-600 transition-colors line-clamp-2 block mb-2"
+                      >
+                        {t.title}
+                      </Link>
+                      
+                      <div className="text-xs font-medium text-slate-400 mb-4 flex flex-wrap items-center gap-1.5">
+                        <span className="bg-slate-100 px-2 py-0.5 rounded text-slate-500">📁 {CATEGORY_LABELS[t.category] || t.category}</span>
+                        <span>· {t.ageHours}h · {t.createdBy.name}</span>
                       </div>
-                      <div className="flex flex-col gap-1.5 mt-3">
+                      
+                      <div className="flex flex-col gap-2 pt-4 border-t border-slate-100">
                         <select
-                          className="text-xs border border-slate-200 rounded-lg px-2 py-1.5 w-full bg-slate-50 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                          className="text-xs font-semibold border-2 border-slate-100 rounded-xl px-3 py-2 w-full bg-slate-50 hover:bg-white focus:outline-none focus:border-brand-500 transition-colors appearance-none"
                           value={t.assignedTo?.id || ''}
                           onChange={(e) => assign(t.id, e.target.value)}
                         >
-                          <option value="">⬜ Unassigned</option>
+                          <option value="">👤 Unassigned</option>
                           {staffList.map((s) => (
                             <option key={s.id} value={s.id}>
-                              👤 {s.name}
+                              {s.name}
                             </option>
                           ))}
                         </select>
-                        <div className="flex gap-1">
+                        <div className="flex gap-2">
                           <select
-                            className="text-xs border border-slate-200 rounded-lg px-2 py-1.5 flex-1 bg-slate-50 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                            className="text-xs font-semibold border-2 border-slate-100 rounded-xl px-3 py-2 flex-1 bg-slate-50 hover:bg-white focus:outline-none focus:border-brand-500 transition-colors appearance-none"
                             value=""
                             onChange={(e) => e.target.value && changeStatus(t.id, e.target.value)}
                           >
-                            <option value="">Move →</option>
+                            <option value="">Move To...</option>
                             {STATUS_COLUMNS.filter((s) => s !== t.status).map((s) => (
                               <option key={s} value={s}>
                                 {STATUS_LABELS[s]}
@@ -233,7 +250,7 @@ export default function StaffPage() {
                             <button
                               onClick={() => escalate(t.id)}
                               title="Escalate ticket"
-                              className="text-xs border border-red-200 bg-red-50 text-red-700 rounded-lg px-2 py-1.5 hover:bg-red-100 transition-colors font-semibold"
+                              className="text-xs font-bold border-2 border-red-100 bg-red-50 text-red-600 rounded-xl px-3 py-2 hover:bg-red-600 hover:text-white transition-all shadow-sm w-12 flex items-center justify-center"
                             >
                               ↑
                             </button>
@@ -243,7 +260,9 @@ export default function StaffPage() {
                     </div>
                   ))}
                   {colTickets.length === 0 && (
-                    <p className="text-xs text-slate-400 text-center py-4 italic">Empty</p>
+                    <div className="bg-slate-50/50 border-2 border-dashed border-slate-200 rounded-2xl p-6 text-center text-slate-400">
+                      <p className="text-sm font-medium">Empty column</p>
+                    </div>
                   )}
                 </div>
               </div>
