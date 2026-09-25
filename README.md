@@ -1,17 +1,27 @@
 # Campus Support Desk — Student Support & Ticket Management
 
-Prototype for the Edumerge pre-drive assignment (Assignment 4).
+Prototype for the Edumerge pre-drive assignment (Assignment 4). This project features a highly polished, premium user interface with dynamic hover states, responsive layouts, and robust backend state validation.
 
-## Setup
+## How to Run Locally
+
+This project uses a local SQLite database for zero-setup execution by the review team.
 
 ```bash
+# 1. Install dependencies
 npm install
-npx prisma migrate dev --name init
+
+# 2. Setup the database and schema
+npx prisma generate
+npx prisma db push
+
+# 3. Seed the database with sample users and tickets
 npm run seed
+
+# 4. Start the development server
 npm run dev
 ```
 
-Open http://localhost:3000
+Open [http://localhost:3000](http://localhost:3000)
 
 - **/student** — raise a ticket, view your own tickets (per-student view with status/priority/overdue badges)
 - **/staff** — full Kanban board across all 6 statuses: filter by category, assign staff, move status, escalate tickets, see SLA/overdue/auto-escalate flags
